@@ -25,9 +25,15 @@ config/master.key
 # config/secrets.yml
 
 # dotenv, dotenv-rails
-# TODO Comment out these rules if environment variables can be committed
 .env
 .env*.local
+/.env*
+!/.env*.erb
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
 
 ## Environment normalization:
 /.bundle
@@ -52,6 +58,7 @@ bower.json
 
 # Ignore node_modules
 node_modules/
+/node_modules
 
 # Ignore precompiled javascript packs
 /public/packs
@@ -63,7 +70,19 @@ node_modules/
 yarn-debug.log*
 .yarn-integrity
 
-# Ignore uploaded files in development
+# Ignore storage (uploaded files in development and any SQLite databases).
 /storage/*
 !/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
 /public/uploads
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+
+.idea
+/.idea
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
