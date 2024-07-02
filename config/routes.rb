@@ -1,5 +1,14 @@
 Rails.application.routes.draw do
-  root 'homepage#index'
+  devise_for :users, path: '', path_names: {
+    sign_in: 'login',
+    sign_out: 'logout',
+    registration: 'signup',
+    edit: 'profile',
+  }, controllers: {
+    sessions: 'users/sessions',
+    registrations: 'users/registrations'
+  }
+  root to: 'homepage#index'
   get 'userpage/index'
   get 'userpage/login'
   get 'homepage/index'
