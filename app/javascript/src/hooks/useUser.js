@@ -1,21 +1,40 @@
-import { useMemo, useRef } from 'react';
 import useSWR from 'swr';
+import {KEY_TOKEN} from "../constants";
+import {fetcher} from "../helpers/CommonUtil";
+import { useDispatch, useSelector } from 'react-redux';
+import {selectEmail, selectUser, updateEmail, updateUser} from "../store/UserReducer";
+import {useEffect, useState} from "react";
 
-const KEY_TOKEN = "access_token";
 export default function useUser() {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const accessToken = localStorage.getItem(KEY_TOKEN);
-    const { data: user, mutate: mutateUser } = useSWR(accessToken ? '/api/user/validate' : null, (url) => {
-        return fetch(url).then(r => r.json())
-    });
+    const dispatch = useDispatch();
+    const storedUser = useSelector(selectUser);
+    const storedEmail = useSelector(selectEmail);
+    const [currentUser, setCurrentUser] = useState();
 
-    console.log(user)
-    if (!user || !user.data || user.status !== '1') {
-        if (user && (user.status === 'error' && user.errorCode === '403')) {
-            localStorage.removeItem(KEY_TOKEN);
-        }
-        return { user: null, mutateUser }
+    const accessToken = localStorage.getItem(KEY_TOKEN);
+
+    const updateUserCallback = (payload) => {
+        dispatch(updateUser(payload));
     }
 
-    return { user, mutateUser }
+    const { data: user, mutate: mutateUser } = useSWR(accessToken ? '/api/user/validate' : null, (url) => {
+        return fetcher(url, {}, 'POST').then(r => r.json()).then(response => {
+            updateUserCallback(response.data);
+            return response
+        })
+    });
+
+    useEffect(() => {
+        setCurrentUser(storedUser);
+    }, [storedUser]);
+
+    if (!user || user?.error) {
+        if (user?.error) {
+            localStorage.removeItem(KEY_TOKEN);
+            dispatch(updateUser(null));
+        }
+        return { user: null, email: null, mutateUser, updateUser: updateUserCallback }
+    }
+
+    return { user: currentUser, email: storedEmail, mutateUser, updateUser: updateUserCallback }
 }

@@ -11,8 +11,9 @@ class ApplicationController < ActionController::Base
   def response_status(mess = 'Success', status = 200, error = false, data: nil)
     render(status: status,
            json: {
-             error: error,
-             message: mess,
+             code: status,
+             error: error ? mess : nil,
+             message: error ? nil : mess,
              data: data
            })
   end

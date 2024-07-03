@@ -6,10 +6,20 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(resource, _opts = {})
-    render json: {
-      status: {code: 200, message: 'Logged in sucessfully.'},
-      data: resource
-    }, status: :ok
+    if resource.persisted?
+      render json: {
+        status: 200,
+        message: 'Logged in sucessfully.',
+        error: nil,
+        data: resource,
+      }, status: :ok
+    else
+      render json: {
+        status: 401,
+        error: 'Invalid credentials.',
+        data: resource
+      }, status: :unauthorized
+    end
   end
 
   def respond_to_on_destroy
@@ -21,7 +31,7 @@ class Users::SessionsController < Devise::SessionsController
     else
       render json: {
         status: 401,
-        message: "Couldn't find an active session."
+        error: "Couldn't find an active session."
       }, status: :unauthorized
     end
   end

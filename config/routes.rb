@@ -12,9 +12,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     post 'user/validate' => 'user#validate'
+    post 'user/check' => 'user#check'
   end
 
-  get 'home/index'
   # Defines the root path route ("/")
   root "home#index"
+  get '/*path' => 'homepage#index'
 end
