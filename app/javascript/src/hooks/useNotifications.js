@@ -3,21 +3,40 @@ import {fetcher} from "../helpers/CommonUtil";
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from "react";
 import {selectTotalVideo, selectVideos, updateTotalVideo, updateVideos} from "../store/VideoReducer";
+import {
+    readAll,
+    readNotification,
+    selectNotification,
+    selectNotificationUnread,
+    updateNotifications
+} from "../store/NotificationReducer";
 
-export default function useVideos() {
+export default function useNotifications() {
     const dispatch = useDispatch();
-    const storedVideos = useSelector(selectVideos);
-    const [currentVideos, setCurrentVideos] = useState([]);
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(10);
-    const total = useSelector(selectTotalVideo);
+    const storedNotification = useSelector(selectNotification);
+    const storedUnread = useSelector(selectNotificationUnread);
+    const [currentNotification, setCurrentNotification] = useState([]);
 
     const updateNotificationCallback = (payload) => {
-        dispatch(updateVideos(payload?.videos || []))
-        dispatch(updateTotalVideo(payload?.total || 0))
+        dispatch(updateNotifications(payload || []))
     }
 
-    const { data: videos, mutate: mutateVideos, error } = useSWR('/api/notifications', (url) => {
+    const markReadNotification = async (id) => {
+        const notification = currentNotification.find(c => c.id === id);
+        if (notification && !notification.read) {
+            dispatch(readNotification(id))
+            await fetcher('/api/notifications/read', {
+                id,
+            }, 'POST')
+        }
+    }
+
+    const markReadAll = async () => {
+        dispatch(readAll())
+        await fetcher('/api/notifications/read-all', {}, 'POST')
+    }
+
+    const { data: notification, mutate: mutateNotification, error } = useSWR('/api/notifications', (url) => {
         return fetcher(url, {}, 'GET').then(r => r.json()).then(response => {
             updateNotificationCallback(response.data)
             return response.data;
@@ -27,19 +46,15 @@ export default function useVideos() {
     });
 
     useEffect(() => {
-        setCurrentVideos(storedVideos);
-    }, [storedVideos]);
+        setCurrentNotification(storedNotification);
+    }, [storedNotification]);
 
-    useEffect(() => {
-        mutateVideos();
-    }, [page])
-
-    if (!videos || videos?.error) {
-        if (videos?.error) {
+    if (!notification || notification?.error) {
+        if (notification?.error) {
             dispatch(updateVideos([]));
         }
-        return { videos: [], mutateVideos, page, setPage, limit, setLimit, total, error }
+        return { notification: [], unread: 0, mutateNotification, markReadNotification, markReadAll, error }
     }
 
-    return { videos: currentVideos, mutateVideos, page, setPage, limit, setLimit, total, error }
+    return { notification: currentNotification, unread: storedUnread, mutateNotification, markReadNotification, markReadAll, error }
 }

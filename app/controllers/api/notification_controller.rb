@@ -1,6 +1,8 @@
 class Api::NotificationController < ApplicationController
   before_action :authenticate_user!
 
+  include YoutubeVideoHelper
+
   def fetch
     notifications = UserNotification.where(:user_id => current_user.id)
                     .order(:created_at => :desc)
@@ -13,9 +15,9 @@ class Api::NotificationController < ApplicationController
                       # .update_all(:read => true)
     end
     video_ids = notifications.map(&:youtube_video_id).uniq
-    videos = YoutubeVideo.find(video_ids).index_by(&:id)
+    videos = map_with_user(YoutubeVideo.find(video_ids)).index_by { |video| video[:id] }
     processed = notifications.map do |notification|
-      notification.info(videos[notification.youtube_video_id].info)
+      notification.info(videos[notification.youtube_video_id])
     end
 
     response_status('Success', 200, false, data: processed)

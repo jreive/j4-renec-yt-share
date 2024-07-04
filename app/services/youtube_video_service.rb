@@ -60,6 +60,8 @@ class YoutubeVideoService
       end
       UserNotification.insert_all!(batch_insert)
       current_user.set_last_watch_id(new_video.id)
+
+      NotificationJob.perform_now(new_video.full_info)
     end
     result
   end

@@ -42,6 +42,9 @@ a, a:focus, a:hover {
   color: #FFF;
   border: none;
 }
+.toast-body {
+  color: #000;
+}
 .hero {
   width: 100vw;
   height: 50vh;
@@ -101,6 +104,9 @@ a, a:focus, a:hover {
   max-height: 250px;
   &:not(:hover) {
     opacity: .92;
+  }
+  &.highlight {
+    background: lavenderblush;
   }
   .video-container {
     flex-direction: column;

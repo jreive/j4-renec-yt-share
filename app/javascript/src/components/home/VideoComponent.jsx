@@ -1,12 +1,12 @@
 import React from 'react';
-import {Card, Row, Col, Image} from "react-bootstrap";
+import {Card, Image} from "react-bootstrap";
 
-const VideoComponent = ({ video }) => {
+const VideoComponent = ({ video, highlight }) => {
     const openVideo = () => {
         window.open(video.url);
     }
 
-    return <Card className="mb-2 video-component">
+    return <Card className={`mb-2 video-component ${highlight ? 'highlight' : ''}`}>
         <Card.Body>
             <div className="d-flex video-container">
                 <div className="video-image d-flex justify-content-center overflow-hidden pointer" onClick={openVideo}>

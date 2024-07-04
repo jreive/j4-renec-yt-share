@@ -34,5 +34,9 @@ class YoutubeVideo < ApplicationRecord
       user_id: user_id
     }
   end
+
+  def full_info
+    self.info.merge({ email: user.email })
+  end
 end
 
