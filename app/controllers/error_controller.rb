@@ -1,4 +1,4 @@
-class ErrorsController < ApplicationController
+class ErrorController < ApplicationController
   respond_to :json
 
   def not_found

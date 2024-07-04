@@ -25,8 +25,8 @@ export default () => {
             user: { email: email.current, password: password.current }
         }, "POST").then(async r => {
             const response = await r.json();
-            if (response.error) {
-                setErrorMessage(response.error);
+            if (response.error || response.status?.error) {
+                setErrorMessage(response.error || response.status?.error);
             } else if (response.data?.id) {
                 localStorage.setItem(KEY_TOKEN, r.headers.get("Authorization"));
                 updateUser(response.data);
@@ -46,6 +46,7 @@ export default () => {
     }, [user]);
 
     const checkEmail = useMemo(() => debounce(async (mail) => {
+        if (!mail) return;
         await fetcher("/api/user/check", {
             email: mail,
         }, "POST").then(r => r.json()).then(response => {

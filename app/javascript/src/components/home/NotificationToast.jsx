@@ -2,17 +2,15 @@ import {Toast, ToastContainer} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import NotificationToastItem from "./NotificationToastItem";
 
-const NotificationToast = ({ newToast }) => {
+const NotificationToast = ({ newToast, user }) => {
     const [toastList, setToastList] = useState([]);
 
     useEffect(() => {
-        console.log('new toast', newToast, toastList)
-        if (newToast) {
+        if (newToast && newToast.user_id !== user?.id) {
             setToastList(p => [...p, newToast]);
         }
     }, [newToast])
 
-    console.log(toastList)
     return <ToastContainer
         className="p-3"
         position={"bottom-end"}

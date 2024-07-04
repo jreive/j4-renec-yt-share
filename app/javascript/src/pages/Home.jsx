@@ -1,17 +1,15 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import useUser from "../hooks/useUser";
-import {debounce, fetcher} from "../helpers/CommonUtil";
-import useSWR from "swr";
+import {debounce} from "../helpers/CommonUtil";
 import VideoPagination from "../components/home/VideoPagination";
-import {useSelector} from "react-redux";
-import {selectVideos} from "../store/VideoReducer";
 import useVideos from "../hooks/useVideos";
 import VideoComponent from "../components/home/VideoComponent";
-import {Button, Toast, ToastContainer} from "react-bootstrap";
+import {Button} from "react-bootstrap";
 import useNotifications from "../hooks/useNotifications";
 import consumer from "../channels/consumer";
 import NotificationToast from "../components/home/NotificationToast";
+import {KEY_TOKEN} from "../constants";
 
 export default () => {
     const { user, email: storedEmail} = useUser();
@@ -24,10 +22,15 @@ export default () => {
         if (redirect) {
             navigate("/login");
         }
-    }, 3000), []);
+    }, 1000), []);
 
     useEffect(() => {
-        checkUserRedirect(!user && !storedEmail);
+        const access = localStorage.getItem(KEY_TOKEN)
+        if (!access) {
+            navigate('/login')
+        } else {
+            checkUserRedirect(!user && !storedEmail);
+        }
     }, [user])
 
     const unreadVideos = useMemo(() => {
@@ -37,7 +40,6 @@ export default () => {
     useEffect(() => {
         consumer.subscriptions.create({ channel: "NotificationsChannel" }, {
             received(data) {
-                console.log('cable', data)
                 setNewToast(data)
                 mutateVideos();
                 mutateNotification();
@@ -48,10 +50,8 @@ export default () => {
         }
     }, []);
 
-    console.log('videos', videos, page, total, error, notification, unreadVideos)
-
     return <div className="vh-100 d-flex align-items-center justify-content-center">
-        <div className="jumbotron jumbotron-fluid bg-transparent">
+        <div className="w-100 jumbotron jumbotron-fluid bg-transparent">
             <div className="video-list pe-2 mt-4">
                 {videos?.map(video => {
                     return <VideoComponent key={video.id} video={video} highlight={unreadVideos.includes(video.id)}/>
@@ -61,7 +61,7 @@ export default () => {
                 <VideoPagination total={total} active={page} perPage={limit} onChange={setPage}/>
                 <Button size={"sm"} className={"mb-3"}>Share a video</Button>
             </div>
-            <NotificationToast newToast={newToast} />
+            <NotificationToast newToast={newToast} user={user} />
         </div>
     </div>
 }

@@ -1,11 +1,18 @@
 # syntax = docker/dockerfile:1
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
-ARG RUBY_VERSION=3.3.3
+ARG RUBY_VERSION=3.3.2
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 # Rails app lives here
+RUN mkdir -p /rails
 WORKDIR /rails
+
+#ENV RAILS_ENV='development'
+#ENV RAKE_ENV='development'
+
+RUN mkdir -p ./tmp
+RUN mkdir -p ./tmp/pids
 
 # Set production environment
 ENV RAILS_ENV="production" \
@@ -43,6 +50,8 @@ RUN yarn install --frozen-lockfile
 # Copy application code
 COPY . .
 
+RUN yarn build && yarn build:css
+
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
@@ -52,7 +61,9 @@ RUN chmod +x bin/* && \
     sed -i 's/ruby\.exe$/ruby/' bin/*
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+ARG RAILS_MASTER_KEY
+ENV RAILS_MASTER_KEY=$RAILS_MASTER_KEY
+RUN SECRET_KEY_BASE_DUMMY=1 SECRET_KEY_BASE=DUMMY ./bin/rails assets:precompile
 
 
 # Final stage for app image
@@ -60,7 +71,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libsqlite3-0 libvips && \
+    apt-get install --no-install-recommends -y curl libsqlite3-0 libvips nodejs npm && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application

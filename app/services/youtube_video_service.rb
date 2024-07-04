@@ -5,7 +5,7 @@ class YoutubeVideoService
   attr_reader :key_rotation
   def initialize
     @key_rotation = KeyRotationService.new([
-                                            'AIzaSyA-0vvnaLGhVFy1TNe819OAXW663E9DWzM'
+                                             ENV['YOUTUBE_API_KEY']
                                           ])
   end
 

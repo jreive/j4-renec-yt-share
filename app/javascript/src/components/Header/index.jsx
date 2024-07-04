@@ -20,7 +20,7 @@ const Header = () => {
                 {email ? <>
                     <div className="nav-link my-mail pointer" onClick={() => {
                         markReadAll()
-                    }}>Hi, {email} <span>{storedUnread}</span></div>
+                    }}>Hi, {email} {storedUnread > 0 && <span>{storedUnread}</span>}</div>
                     <div className={`nav-link ${window?.location.pathname === '/' ? 'active' : ''}`}>Shared video</div>
                     {/*<div className={`nav-link ${window?.location.pathname === '/me' ? 'active' : ''}`}>My video</div>*/}
                     <div className="nav-link pointer" onClick={async () => {
