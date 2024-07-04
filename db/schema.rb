@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_04_083102) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_04_133611) do
+  create_table "user_notifications", force: :cascade do |t|
+    t.string "title"
+    t.integer "user_id", null: false
+    t.integer "youtube_video_id", null: false
+    t.boolean "read", default: false, null: false
+    t.datetime "read_at"
+    t.boolean "pushed", default: false, null: false
+    t.datetime "pushed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_notifications_on_user_id"
+    t.index ["youtube_video_id"], name: "index_user_notifications_on_youtube_video_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -34,9 +48,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_04_083102) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
     t.index ["user_id"], name: "index_youtube_videos_on_user_id"
   end
 
+  add_foreign_key "user_notifications", "users"
+  add_foreign_key "user_notifications", "youtube_videos"
   add_foreign_key "users", "youtube_videos"
   add_foreign_key "youtube_videos", "users"
 end

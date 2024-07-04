@@ -5,16 +5,34 @@ class YoutubeVideo < ApplicationRecord
   validates :thumb, presence: true
   has_many :users
 
-  def self.create_from_payload(payload)
-    title = payload["title"]
+  def self.create_from_payload(payload, current_user)
 
-    raise 'Invalid payload' if title.nil? || title.empty?
+    title = payload[:title]
+    url = payload[:url]
+    thumb = payload[:thumbnail]
+    description = payload[:description]
 
+    raise 'Invalid payload' if title.nil? || title.empty? || url.nil? || url.empty? || thumb.nil? || thumb.empty? || current_user.nil?
 
-    payload["thumbnails"]
-    payload["thumbnails"]["medium"]
-    payload["thumbnails"]["medium"]["url"]
-    payload["thumbnails"]["medium"]["url"].length > 0
+    video = YoutubeVideo.new
+    video.user = current_user
+    video.url = url
+    video.title = title
+    video.thumb = thumb
+    video.description = description
+
+    video
+  end
+
+  def info
+    {
+      id: self.id,
+      title: title,
+      description: description,
+      thumb: thumb,
+      url: url,
+      user_id: user_id
+    }
   end
 end
 

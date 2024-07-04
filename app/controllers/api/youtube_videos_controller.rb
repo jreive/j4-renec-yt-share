@@ -2,6 +2,8 @@ class Api::YoutubeVideosController < ApplicationController
   respond_to :json
   before_action :authenticate_user!
 
+  include YoutubeVideoHelper
+
   @video_service = nil
 
   class << self
@@ -15,13 +17,14 @@ class Api::YoutubeVideosController < ApplicationController
     payload = params.permit(:page, :limit)
     page = payload[:page] || 1
     videos = YoutubeVideo.order(id: :desc)
-                .paginate(per_page: payload[:limit] || 10, page: page).to_a
+                         .paginate(per_page: payload[:limit] || 10, page: page)
     if page.to_i == 1 && !videos.empty? && current_user.not_watch_till_id(videos.first.id)
       current_user.set_last_watch_id(videos.first.id)
     end
-    response_status('Success', 200, false, data: videos)
-  rescue ActiveRecord::ActiveRecordError, StandardError => e
-    response_status(e.message, 500, true)
+    response_status('Success', 200, false, data: {
+      total: YoutubeVideo.count,
+      videos: map_with_user(videos)
+    })
   end
 
   # Use to share a video
@@ -38,8 +41,6 @@ class Api::YoutubeVideosController < ApplicationController
         return response_status('Could not save video', 422, true)
       end
     end
-  rescue ActiveRecord::ActiveRecordError, StandardError => e
-    response_status(e.message, 500, true)
   end
 
   # Use to get latest un-watched video after restore connection
@@ -48,9 +49,17 @@ class Api::YoutubeVideosController < ApplicationController
     unless videos.empty?
       current_user.set_last_watch_id(videos.last&.id || 0)
     end
-    response_status('Success', 200, false, data: videos)
-  rescue ActiveRecord::ActiveRecordError, StandardError => e
-    response_status(e.message, 500, true)
+    response_status('Success', 200, false, data: map_with_user(videos))
+  end
+
+  def get_by_id
+    video_id = params.require(:id)
+    videos = YoutubeVideo.find(video_id)
+    if videos.nil?
+      response_status('Could not find video', 422, true)
+    else
+      response_status('Success', 200, false, data: map_with_user(videos).first)
+    end
   end
 
   # Save which last video user viewed
@@ -65,8 +74,6 @@ class Api::YoutubeVideosController < ApplicationController
     else
       response_status('Could not save last watch', 422, true)
     end
-  rescue ActiveRecord::ActiveRecordError, StandardError => e
-    response_status(e.message, 500, true)
   end
 
 end

@@ -36,7 +36,8 @@ class YoutubeVideoService
           url: video_url,
           channelId: data['channelId'],
           title: data['title'],
-          thumbnail: data.try(:[], "thumbnails").try(:[], "medium").try(:[], "url")
+          thumbnail: data.try(:[], "thumbnails").try(:[], "medium").try(:[], "url"),
+          description: data['description'],
         }
       end
     end
@@ -46,17 +47,19 @@ class YoutubeVideoService
   end
 
   def create_video(video, current_user)
-    new_video = YoutubeVideo.new
-    new_video.user = current_user
-    new_video.url = video[:url]
-    new_video.title = video[:title]
-    new_video.thumb = video[:thumbnail]
+    new_video = YoutubeVideo.create_from_payload(video, current_user)
     result = new_video.save!
     if result
+      uids = User.where('youtube_video_id < ? or youtube_video_id is null', new_video.id).pluck(:id)
+      uids.delete(current_user.id)
+      batch_insert = uids.map do |uid|
+        {
+          user_id: uid,
+          youtube_video_id: new_video.id,
+        }
+      end
+      UserNotification.insert_all!(batch_insert)
       current_user.set_last_watch_id(new_video.id)
-
-      User.where('youtube_video_id < ?', new_video.id).pluck(:id)
-      # TODO send noti
     end
     result
   end

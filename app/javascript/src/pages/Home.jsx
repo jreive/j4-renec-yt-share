@@ -1,23 +1,43 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, {useEffect, useMemo, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import useUser from "../hooks/useUser";
+import {debounce, fetcher} from "../helpers/CommonUtil";
+import useSWR from "swr";
+import VideoPagination from "../components/home/VideoPagination";
+import {useSelector} from "react-redux";
+import {selectVideos} from "../store/VideoReducer";
+import useVideos from "../hooks/useVideos";
+import VideoComponent from "../components/home/VideoComponent";
+import {Button} from "react-bootstrap";
 
-export default () => (
-    <div className="vw-100 vh-100 primary-color d-flex align-items-center justify-content-center">
+export default () => {
+    const { user, email: storedEmail} = useUser();
+    const navigate = useNavigate();
+    const { videos, limit, page, setPage, total, error } = useVideos();
+
+    const checkUserRedirect = useMemo(() => debounce(async (redirect) => {
+        if (redirect) {
+            navigate("/login");
+        }
+    }, 3000), []);
+
+    useEffect(() => {
+        checkUserRedirect(!user && !storedEmail);
+    }, [user])
+
+    console.log('videos', videos, page, total, error)
+
+    return <div className="vh-100 d-flex align-items-center justify-content-center">
         <div className="jumbotron jumbotron-fluid bg-transparent">
-            <div className="container secondary-color">
-                <h1 className="display-4">Sport exercises</h1>
-                <p className="lead">
-                    A list of sport exercises to boost your workout.
-                </p>
-                <hr className="my-4" />
-                <Link
-                    to="/exercises"
-                    className="btn btn-lg custom-button"
-                    role="button"
-                >
-                    View Exercises
-                </Link>
+            <div className="video-list pe-2 mt-4">
+                {videos?.map(video => {
+                    return <VideoComponent key={video.id} video={video}/>
+                })}
+            </div>
+            <div className="mt-3 d-flex justify-content-between">
+                <VideoPagination total={total} active={page} perPage={limit} onChange={setPage}/>
+                <Button size={"sm"} className={"mb-3"}>Share a video</Button>
             </div>
         </div>
     </div>
-);
+}

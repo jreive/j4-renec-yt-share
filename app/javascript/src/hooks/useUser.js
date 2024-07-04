@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import {KEY_TOKEN} from "../constants";
 import {fetcher} from "../helpers/CommonUtil";
-import { useDispatch, useSelector } from 'react-redux';
-import {selectEmail, selectUser, updateEmail, updateUser} from "../store/UserReducer";
+import {useDispatch, useSelector} from 'react-redux';
+import {selectEmail, selectUser, updateUser} from "../store/UserReducer";
 import {useEffect, useState} from "react";
 
 export default function useUser() {

@@ -3,7 +3,7 @@ export function delay(ms) {
 }
 
 export function fetcher(url, payload, method = 'GET') {
-    return fetch(url, {
+    return fetch(url + (method === 'GET' ? '?' + new URLSearchParams(payload).toString() : ''), {
         method,
         headers: {
             'Accept': 'application/json',
@@ -11,7 +11,7 @@ export function fetcher(url, payload, method = 'GET') {
         },
         redirect: "follow",
         credentials: 'include',
-        body: JSON.stringify(payload)
+        body: method === 'POST' ? JSON.stringify(payload) : undefined
     })
 }
 
