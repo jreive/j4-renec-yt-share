@@ -7,6 +7,8 @@ gem "rails", "~> 7.1.3", ">= 7.1.3.4"
 
 gem 'devise', '~> 4.9', '>= 4.9.4'
 gem 'devise-jwt', '~> 0.11.0'
+gem 'validate_email', '~> 0.1.6'
+gem 'will_paginate', '~> 4.0', '>= 4.0.1'
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -65,6 +67,7 @@ end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+  gem 'shoulda', '~> 5.0.0.rc1'
   gem "capybara"
   gem "selenium-webdriver"
 end

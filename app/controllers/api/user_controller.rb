@@ -14,5 +14,7 @@ class Api::UserController < ApplicationController
     else
       response_status('Email valid to signup')
     end
+  rescue ActiveRecord::ActiveRecordError, StandardError => e
+    response_status(e.message, 500, true)
   end
 end

@@ -15,4 +15,9 @@ Simple system allow user to login/register and share their videos with others.
 
 ## Usage
 
+### Testing
+    
+    rake test:prepare
+    rake db:migrate RAILS_ENV=test
+
 ## Troubleshooting

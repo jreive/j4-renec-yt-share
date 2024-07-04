@@ -13,6 +13,12 @@ Rails.application.routes.draw do
   namespace :api do
     post 'user/validate' => 'user#validate'
     post 'user/check' => 'user#check'
+
+    get 'videos', to: 'youtube_videos#index'
+    get 'videos/latest', to: 'youtube_videos#latest_video'
+
+    post 'videos/create' => 'youtube_videos#create'
+    post 'videos/watch' => 'youtube_videos#watched'
   end
 
   # Defines the root path route ("/")
