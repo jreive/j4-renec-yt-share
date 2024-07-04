@@ -9,11 +9,16 @@ class User < ApplicationRecord
   validates :email, :email => true, presence: true
 
   has_many :youtube_videos
+  belongs_to :youtube_video, optional: true
 
   def set_last_watch_id(id)
-    if self.video_index < id
-      self.video_index = id
-      self.save
+    if id.positive? && self.not_watch_till_id(id)
+      self.youtube_video_id = id
+      self.save!
     end
+  end
+
+  def not_watch_till_id(id)
+    self.youtube_video_id.nil? || (self.youtube_video_id < id)
   end
 end

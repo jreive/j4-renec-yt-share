@@ -3,6 +3,7 @@ class YoutubeVideo < ApplicationRecord
   validates :url, presence: true
   validates :title, presence: true
   validates :thumb, presence: true
+  has_many :users
 
   def self.create_from_payload(payload)
     title = payload["title"]

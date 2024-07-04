@@ -13,9 +13,10 @@ class Api::YoutubeVideosController < ApplicationController
   # Use when init page
   def index
     payload = params.permit(:page, :limit)
+    page = payload[:page] || 1
     videos = YoutubeVideo.order(id: :desc)
-                .paginate(per_page: payload[:limit] || 10, page: payload[:page] || 1).to_a
-    if !videos.empty? && current_user.video_index < videos.first.id
+                .paginate(per_page: payload[:limit] || 10, page: page).to_a
+    if page.to_i == 1 && !videos.empty? && current_user.not_watch_till_id(videos.first.id)
       current_user.set_last_watch_id(videos.first.id)
     end
     response_status('Success', 200, false, data: videos)
@@ -30,12 +31,8 @@ class Api::YoutubeVideosController < ApplicationController
     if video.nil?
       response_status('Could not find video metadata', 422, true)
     else
-      new_video = YoutubeVideo.new
-      new_video.user = current_user
-      new_video.url = url
-      new_video.title = video[:title]
-      new_video.thumb = video[:thumbnail]
-      if new_video.save!
+      new_video = Api::YoutubeVideosController.video_service.create_video(video, current_user)
+      if new_video
         return response_status('Successfully created video', 201, true)
       else
         return response_status('Could not save video', 422, true)
@@ -47,9 +44,9 @@ class Api::YoutubeVideosController < ApplicationController
 
   # Use to get latest un-watched video after restore connection
   def latest_video
-    videos = YoutubeVideo.where('id > ?', current_user.video_index).order(created_at: :desc)
+    videos = current_user.youtube_video_id.nil? ? [] : YoutubeVideo.where('id > ?', current_user.youtube_video_id).order(created_at: :desc)
     unless videos.empty?
-      current_user.set_last_watch_id(videos.last.id)
+      current_user.set_last_watch_id(videos.last&.id || 0)
     end
     response_status('Success', 200, false, data: videos)
   rescue ActiveRecord::ActiveRecordError, StandardError => e
@@ -59,8 +56,15 @@ class Api::YoutubeVideosController < ApplicationController
   # Save which last video user viewed
   def watched
     last_id = params.require(:last_id)
-    current_user.set_last_watch_id(last_id)
-    response_status
+    video = YoutubeVideo.find_by(id: last_id)
+    if video.nil?
+      return response_status('Could not find video', 422, true)
+    end
+    if current_user.set_last_watch_id(last_id)
+      response_status
+    else
+      response_status('Could not save last watch', 422, true)
+    end
   rescue ActiveRecord::ActiveRecordError, StandardError => e
     response_status(e.message, 500, true)
   end

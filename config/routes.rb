@@ -14,8 +14,8 @@ Rails.application.routes.draw do
     post 'user/validate' => 'user#validate'
     post 'user/check' => 'user#check'
 
-    get 'videos', to: 'youtube_videos#index'
-    get 'videos/latest', to: 'youtube_videos#latest_video'
+    get 'videos' => 'youtube_videos#index'
+    get 'videos/latest' => 'youtube_videos#latest_video'
 
     post 'videos/create' => 'youtube_videos#create'
     post 'videos/watch' => 'youtube_videos#watched'

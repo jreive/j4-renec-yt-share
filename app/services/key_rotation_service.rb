@@ -1,4 +1,4 @@
-class KeyRotationHelper
+class KeyRotationService
   # TODO: Read keys from env
   attr_reader :keys
 

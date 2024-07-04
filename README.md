@@ -21,3 +21,5 @@ Simple system allow user to login/register and share their videos with others.
     rake db:migrate RAILS_ENV=test
 
 ## Troubleshooting
+
+To saving database space, there is not relate table between user and video shared, so when user share a new video during disconnect. They could miss other update

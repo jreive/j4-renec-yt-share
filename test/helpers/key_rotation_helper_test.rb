@@ -2,12 +2,12 @@ require "test_helper"
 
 class KeyRotationHelperTest < ActiveSupport::TestCase
   test "Should return correct sample" do
-    helper = KeyRotationHelper.new(['abc'])
+    helper = KeyRotationService.new(['abc'])
     assert_equal helper.get_random, 'abc'
   end
 
   test "Should random" do
-    helper = KeyRotationHelper.new(['abc', 'def', 'ghi', 'jkl', 'mno', 'pqr'])
+    helper = KeyRotationService.new(['abc', 'def', 'ghi', 'jkl', 'mno', 'pqr'])
     f_key = helper.get_random
     s_key = helper.get_random
     t_key = helper.get_random
