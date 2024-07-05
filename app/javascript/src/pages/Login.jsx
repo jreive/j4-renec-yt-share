@@ -25,7 +25,7 @@ export default () => {
             user: { email: email.current, password: password.current }
         }, "POST").then(async r => {
             const response = await r.json();
-            if (response.error || response.status?.error) {
+            if (response.error || (response.status?.error && !response.data)) {
                 setErrorMessage(response.error || response.status?.error);
             } else if (response.data?.id) {
                 localStorage.setItem(KEY_TOKEN, r.headers.get("Authorization"));

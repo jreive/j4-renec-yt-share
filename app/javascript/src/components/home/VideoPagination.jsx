@@ -5,7 +5,6 @@ const VideoPagination = ({ active, size = undefined, total, perPage, onChange })
     const [maxPage, setMaxPage] = useState(Math.ceil(total / perPage));
 
     const items = useMemo(() => {
-        console.log('maxPage', maxPage)
         const items = [];
         let middle = Math.ceil(maxPage / 2);
         if (maxPage >= 10 && active > 1 && active < maxPage - 2) {

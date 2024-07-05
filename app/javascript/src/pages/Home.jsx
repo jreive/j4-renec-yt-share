@@ -91,7 +91,6 @@ export default () => {
                             name="url"
                             placeholder="https://www.youtube.com/watch?v=T0sHaz4H9MQ"
                             autoFocus
-                            value={shareUrl.current}
                             onChange={e => shareUrl.current = e.target.value}
                         />
                     </Form.Group>
