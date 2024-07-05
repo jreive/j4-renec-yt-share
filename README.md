@@ -31,7 +31,9 @@ This project uses SQLite3, saved in the `storage` folder.
     rake db:migrate
 ```
 ### Google API
-I use the YouTube Data API v3 to fetch YouTube video snippets. You can create an API key from here. Follow these guides. Remember to add restrictions to `YouTube Data API v3` only to prevent any accidental usage with your Google account when using the API.
+I use the YouTube Data API v3 to fetch YouTube video snippets. You can create an API key from [here](https://console.cloud.google.com/apis/credentials). Follow these [guides](https://developers.google.com/youtube/registering_an_application). Remember to add restrictions to `YouTube Data API v3` only to prevent any accidental usage with your Google account when using the API.
+
+In-case you don't have enough time, here is a test token: `AIzaSyA-0vvnaLGhVFy1TNe819OAXW663E9DWzM`
 
 The API key must be stored in the `.env` file with the key `YOUTUBE_API_KEY`:
                             
