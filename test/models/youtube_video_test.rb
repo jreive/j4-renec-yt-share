@@ -3,6 +3,7 @@ require "test_helper"
 class YoutubeVideoTest < ActiveSupport::TestCase
   context "associations" do
     should belong_to(:user)
+    should have_many(:user_notifications)
   end
 
   context "validations" do

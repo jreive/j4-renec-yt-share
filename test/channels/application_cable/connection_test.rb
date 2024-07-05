@@ -2,12 +2,27 @@ require "test_helper"
 
 module ApplicationCable
   class ConnectionTest < ActionCable::Connection::TestCase
-    # test "connects with cookies" do
-    #   cookies.signed[:user_id] = 42
-    #
-    #   connect
-    #
-    #   assert_equal connection.user_id, "42"
-    # end
+    include ActionCable::TestHelper
+    include Devise::Test::IntegrationHelpers
+
+    test "connects with devise" do
+      user = users(:user_admin)
+      sign_in user
+      connect_with_user(user)
+      assert_equal connection.current_user, user
+    end
+
+    private
+
+    def connect_with_user(user)
+      connect env: { 'warden' => FakeEnv.new(user) }
+    end
+
+    class FakeEnv
+      attr_reader :user
+      def initialize(user)
+        @user = user
+      end
+    end
   end
 end

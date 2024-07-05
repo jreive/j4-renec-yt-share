@@ -30,11 +30,13 @@ class YoutubeVideoServiceTest < ActiveSupport::TestCase
   end
 
   test "Should contain title and thumbnail" do
+    assert_not_nil @video
     assert_not_nil @video[:title]
     assert_equal true, @video[:title].length > 0
     assert_not_nil @video[:thumbnail]
     assert_equal true, @video[:thumbnail].length > 0
 
+    assert_not_nil @video_short
     assert_not_nil @video_short[:title]
     assert_equal true, @video_short[:title].length > 0
     assert_not_nil @video_short[:thumbnail]

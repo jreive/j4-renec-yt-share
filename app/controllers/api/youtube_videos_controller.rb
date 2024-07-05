@@ -54,11 +54,11 @@ class Api::YoutubeVideosController < ApplicationController
 
   def get_by_id
     video_id = params.require(:id)
-    videos = YoutubeVideo.find(video_id)
-    if videos.nil?
+    video = YoutubeVideo.find(video_id)
+    if video.nil?
       response_status('Could not find video', 422, true)
     else
-      response_status('Success', 200, false, data: map_with_user(videos).first)
+      response_status('Success', 200, false, data: map_with_user([video]).first)
     end
   end
 

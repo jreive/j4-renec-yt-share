@@ -1,11 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  title: MyString
-  users: one
-  youtube_videos: one
+  id: 1,
+  title: "First video"
+  user_id: 1
+  youtube_video_id: 1
+  read: false
+  pushed: false
 
 two:
-  title: MyString
-  users: two
-  youtube_videos: two
+  id: 2,
+  title: "Now what's upppp"
+  user_id: 1
+  youtube_video_id: 2
+  read: false
+  pushed: false

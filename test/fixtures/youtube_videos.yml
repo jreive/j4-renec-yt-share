@@ -1,10 +1,12 @@
 one:
+  id: 1
   user_id: 1
   url: https://www.youtube.com/watch?v=1mkUp1V3ys0
   title: M83 - Oblivion (feat. Susanne Sundfør)
   thumb: https://i.ytimg.com/vi/1mkUp1V3ys0/hqdefault.jpg
 
 two:
+  id: 2
   title: 24 Hours Listening Practice Level 2
   url: https://www.youtube.com/watch?v=vuTY4FDAbpA
   user_id: 1

@@ -4,6 +4,7 @@ class YoutubeVideo < ApplicationRecord
   validates :title, presence: true
   validates :thumb, presence: true
   has_many :users
+  has_many :user_notifications
 
   def self.create_from_payload(payload, current_user)
 

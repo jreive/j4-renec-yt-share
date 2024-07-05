@@ -2,6 +2,8 @@ ActiveRecord::Migration.maintain_test_schema!
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
+require "dotenv"
+Dotenv.load('.env.local')
 
 module ActiveSupport
   class TestCase

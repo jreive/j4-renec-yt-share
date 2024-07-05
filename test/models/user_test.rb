@@ -3,6 +3,7 @@ require "test_helper"
 class UserTest < ActiveSupport::TestCase
   context "associations" do
     should have_many(:youtube_videos)
+    should have_many(:user_notifications)
   end
 
   context "validations" do

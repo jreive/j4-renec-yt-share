@@ -1,15 +1,15 @@
 Rails.application.routes.draw do
-  get '/404', to: 'errors#not_found'
-  get '/500', to: 'errors#internal_server_error'
+  get '/404' => 'errors#not_found'
+  get '/500' => 'errors#internal_server_error'
 
   devise_for :users,
              path: '', skip: [:sessions, :registrations,
               :passwords, :confirmations,
               :unlocks]
   devise_scope :user do
-    post 'login', to: 'users/sessions#create'
-    delete 'logout', to: 'users/sessions#destroy'
-    post 'signup', to: 'users/registrations#create'
+    post 'login' => 'users/sessions#create'
+    delete 'logout' => 'users/sessions#destroy'
+    post 'signup' => 'users/registrations#create'
   end
 
   namespace :api do

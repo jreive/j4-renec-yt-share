@@ -1,6 +1,6 @@
 class UserNotification < ApplicationRecord
   validates :title, presence: true
-  validates :read, presence: true
+
   belongs_to :user
   belongs_to :youtube_video
 

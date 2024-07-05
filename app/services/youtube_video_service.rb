@@ -54,6 +54,7 @@ class YoutubeVideoService
       uids.delete(current_user.id)
       batch_insert = uids.map do |uid|
         {
+          title: new_video.title,
           user_id: uid,
           youtube_video_id: new_video.id,
         }
